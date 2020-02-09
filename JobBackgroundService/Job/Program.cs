@@ -1,14 +1,26 @@
 ﻿using System;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Job
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-
-            Console.ReadKey();
+            try
+            {
+                Console.WriteLine("Job service started...");
+                CreateWebHostBuilder(args).Build().Run();
+            }
+            catch ( Exception ex)
+            {
+                Console.WriteLine("Job service stoped...", ex);
+            }
         }
+
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
+                .UseStartup<StartUp>();
     }
 }
