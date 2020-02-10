@@ -1,21 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
+
+using Job.Context;
+using Job.Helper;
 using Job.Settings;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 
 namespace Job.Service
 {
     public class JobService : BackgroundService
     {
         public AppSettings _settings { get; }
-        public JobService(IConfiguration opt)
+        public DBLocalContext DB { get; }
+
+        public JobService(IConfiguration opt, DBLocalContext dB)
         {
-            _settings = opt.GetSection("AppSettings").Get<AppSettings>();
+            _settings = ConfigurationHelper.GetAppSettings(opt);
+            DB = dB;
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -23,6 +28,7 @@ namespace Job.Service
             {
                 Console.WriteLine("Hello World!");
 
+                Console.WriteLine($"CanConnect = {DB.Database.CanConnect()}");
 
                 await Task.Delay(GetDelaySeconds(_settings.UpdateTimeSec), stoppingToken);
             }
