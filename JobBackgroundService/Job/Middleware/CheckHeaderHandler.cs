@@ -12,7 +12,7 @@ namespace Job.Middleware
     {
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            if ( !request.Headers.Contains("X-Yandex-API-Key1") )
+            if ( !request.Headers.Contains("X-Yandex-API-Key") )
             {
                 return new HttpResponseMessage(HttpStatusCode.BadRequest)
                 {
