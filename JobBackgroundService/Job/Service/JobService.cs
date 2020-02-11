@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
 
 using Job.Context;
 using Job.Helper;
 using Job.Settings;
+using Job.YaHttpClient;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -14,13 +15,15 @@ namespace Job.Service
 {
     public class JobService : BackgroundService
     {
-        public AppSettings _settings { get; }
-        public DBLocalContext DB { get; }
+        public readonly AppSettings _settings;
+        public readonly DBLocalContext _DB;
+        public readonly YandexHttpClient _clientFactory;
 
-        public JobService(IConfiguration opt, DBLocalContext dB)
+        public JobService(IConfiguration opt, DBLocalContext dB, YandexHttpClient clientFactory)
         {
             _settings = ConfigurationHelper.GetAppSettings(opt);
-            DB = dB;
+            _DB = dB;
+            _clientFactory = clientFactory;
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -28,7 +31,15 @@ namespace Job.Service
             {
                 Console.WriteLine("Hello World!");
 
-                Console.WriteLine($"CanConnect = {DB.Database.CanConnect()}");
+                Console.WriteLine($"CanConnect = {_DB.Database.CanConnect()}");
+                var place = _DB.Places.FirstOrDefault();
+
+                var result = await _clientFactory.GetWeatherByPlace(place);
+
+                if ( result is null )
+                {
+                    Console.WriteLine("Something is wrong");
+                }
 
                 await Task.Delay(GetDelaySeconds(_settings.UpdateTimeSec), stoppingToken);
             }
