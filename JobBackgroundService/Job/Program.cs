@@ -10,17 +10,16 @@ namespace Job
         {
             try
             {
-                Console.WriteLine("Job service started...");
+                Console.WriteLine("Job service is started...");
                 CreateWebHostBuilder(args).Build().Run();
             }
             catch ( Exception ex)
             {
-                Console.WriteLine("Job service stoped...", ex);
+                Console.WriteLine("Job service is stopped by an Exception...", ex);
             }
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<StartUp>();
+            WebHost.CreateDefaultBuilder<StartUp>(args);
     }
 }
