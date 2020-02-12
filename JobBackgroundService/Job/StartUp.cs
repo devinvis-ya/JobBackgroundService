@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using Job.Context;
+﻿using Job.Context;
+using Job.Middleware;
 using Job.Service;
-using Job.Settings;
+using Job.YaHttpClient;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,7 +11,7 @@ namespace Job
 {
     public class StartUp
     {
-        public IHostingEnvironment Environment { get; }
+        public readonly IHostingEnvironment Environment;
         public IConfiguration Configuration { get; private set; }
         public StartUp(IConfiguration configuration, IHostingEnvironment environment)
         {
@@ -26,8 +22,12 @@ namespace Job
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHostedService<JobService>();
+
             services.AddEntityFrameworkSqlServer().AddDbContext<DBLocalContext>();
 
+            services.AddTransient<CheckHeaderHandler>();
+            services.AddHttpClient("YandexWeather").AddHttpMessageHandler<CheckHeaderHandler>();
+            services.AddTransient<YandexHttpClient>();
         }
 
         public void Configure(IApplicationBuilder app) { }
