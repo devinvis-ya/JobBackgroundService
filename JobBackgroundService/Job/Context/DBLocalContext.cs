@@ -15,6 +15,7 @@ namespace Job.Context
         public DBLocalContext(DbContextOptions<DBLocalContext> options, IConfiguration opt) : base(options)
         {
             _settings = ConfigurationHelper.GetAppSettings(opt);
+            Database.Migrate();
             Database.EnsureCreated();
         }
 
@@ -42,7 +43,8 @@ namespace Job.Context
                 new List<Place>() {new Place() {
                     Id = 1,
                     Latitude = 55.751379,
-                    Longitude = 37.618853
+                    Longitude = 37.618853,
+                    Name = "Moscow"
                 } });
         }
         public DbSet<Fact> Facts { get; set; }
