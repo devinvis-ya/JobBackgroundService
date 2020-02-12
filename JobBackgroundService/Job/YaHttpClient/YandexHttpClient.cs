@@ -16,10 +16,12 @@ namespace Job.YaHttpClient
     {
         public readonly AppSettings _settings;
         public readonly IHttpClientFactory _clientFactory;
+        private readonly HttpClient _client;
         public YandexHttpClient(IConfiguration opt, IHttpClientFactory clientFactory)
         {
             _settings = ConfigurationHelper.GetAppSettings(opt);
             _clientFactory = clientFactory;
+            _client = CreateCustomHttpClient(_clientFactory.CreateClient("YandexWeather"));
         }
 
         private HttpClient CreateCustomHttpClient(HttpClient client)
@@ -32,8 +34,7 @@ namespace Job.YaHttpClient
             Uri yaUri = new Uri(_settings.YandexWeather?.Url).AddParameter("lat", place.Latitude.ToString(new CultureInfo("en-US")))
                                                              .AddParameter("lon", place.Longitude.ToString(new CultureInfo("en-US")));
             var request = new HttpRequestMessage(HttpMethod.Get, HttpUtility.UrlDecode(yaUri.ToString()));
-            var client = CreateCustomHttpClient(_clientFactory.CreateClient("YandexWeather"));
-            var response = await client.SendAsync(request);
+            var response = await _client.SendAsync(request);
 
             if ( response.IsSuccessStatusCode )
             {
