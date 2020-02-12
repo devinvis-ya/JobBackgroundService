@@ -55,9 +55,12 @@ namespace Job.DBModel
         /// </summary>
         public string Season { get; set; }
         /// <summary>
-        /// Дата записи в БД
+        /// Внешний ключ таблицы dbo.Places
         /// </summary>
         public int PlaceId { get; set; }
+        /// <summary>
+        /// Дата записи в БД
+        /// </summary>
         public DateTime CreateDate { get; set; }
     }
 }
